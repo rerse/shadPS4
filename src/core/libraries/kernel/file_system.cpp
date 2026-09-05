@@ -238,9 +238,9 @@ s32 PS4_SYSV_ABI open(const char* raw_path, s32 flags, u16 mode) {
         if (!file->handle || !file->handle->IsOpen()) {
             h->DeleteHandle(handle);
             auto mount = mnt->GetMount(raw_path);
-            *__Error() =
-                mount ? (write || rdwr || truncate) && mount->read_only ? POSIX_EROFS : POSIX_EIO
-                      : POSIX_EINVAL;
+            *__Error() = (write || rdwr || truncate) && mnt->GetMount(raw_path)->read_only
+                             ? POSIX_EROFS
+                             : POSIX_EIO;
             LOG_ERROR(Kernel_Fs, "Opening {} failed, backend did not serve the file", raw_path);
             return -1;
         }
